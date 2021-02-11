@@ -27,8 +27,8 @@ export function extendObjectsOnly<T>(
     Object.keys(source).forEach(key => {
       const value = source[key];
 
-      // prevent infinite loops
-      if (value === target) {
+      // prevent infinite loops and prototype pollution
+      if (value === target || isPrototypePolluted(key)) {
         return;
       }
 
@@ -42,4 +42,12 @@ export function extendObjectsOnly<T>(
   }
 
   return target;
+}
+
+/**
+ * Blacklist certain keys to prevent prototype pollution
+ * @param key Object key to check
+ */
+function isPrototypePolluted(key: string) {
+  return /^__proto__|constructor|prototype$/.test(key);
 }

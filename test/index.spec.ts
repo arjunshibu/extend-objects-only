@@ -166,6 +166,15 @@ describe('#extendObjectsOnly<any>', () => {
     assert.deepEqual(res, expected);
   });
 
+  it('should prevent prototype pollution', () => {
+    const base = {};
+    const ext = JSON.parse('{"__proto__": {"polluted": true}}');
+
+    const res = extendObjectsOnly<any>(base, ext)
+    assert.deepEqual(res, base);
+    assert.strictEqual(Object.keys(Object.prototype).includes('polluted'), false);
+  });
+
   it('should ignore undefined parameters', () => {
     type T = Record<'a' | 'b' | 'c' | 'd', number>;
     const p1 = { a: 1 };
